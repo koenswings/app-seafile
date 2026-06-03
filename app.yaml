@@ -1,0 +1,38 @@
+app: seafile
+idea_app_version: "1.0"
+
+compatibility:
+  engine_min: "0.9.0"
+  engine_tested: "unknown"
+
+services:
+  - name: seafile
+    build: retag
+    upstream: seafileltd/seafile-mc
+    upstream_tag: "11.0-latest"
+    image: koenswings/seafile
+    current_version: "unknown"
+    monitors:
+      - kind: dockerhub
+        repo: seafileltd/seafile-mc
+        tag_pattern: "^\\d+\\.\\d+-latest$"
+
+  - name: db
+    build: direct
+    upstream: mariadb
+    upstream_tag: "10.11"
+    notes: "Currently using upstream image directly — should migrate to retag approach."
+    monitors:
+      - kind: dockerhub
+        repo: library/mariadb
+        tag_pattern: "^10\\.\\d+$"
+
+  - name: memcached
+    build: direct
+    upstream: memcached
+    upstream_tag: "1.6.18"
+    notes: "Currently using upstream image directly — should migrate to retag approach."
+    monitors:
+      - kind: dockerhub
+        repo: library/memcached
+        tag_pattern: "^1\\.\\d+\\.\\d+$"
