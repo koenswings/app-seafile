@@ -16,7 +16,8 @@ services:
     container_name: seafile-mysql
     restart: no
     environment:
-      - MYSQL_ROOT_PASSWORD=db_dev               # Required, set the root's password of MySQL service.
+      # ${pass} is generated per instance into .env by the Engine (idea#123).
+      - MYSQL_ROOT_PASSWORD=${pass}
       - MYSQL_LOG_CONSOLE=true
       - MARIADB_AUTO_UPGRADE=1
     volumes:
@@ -46,10 +47,11 @@ services:
       - ./data:/shared                           # Required, specifies the path to Seafile data persistent store.
     environment:
       - DB_HOST=db
-      - DB_ROOT_PASSWD=db_dev                    # Required, the value should be root's password of MySQL service.
+      - DB_ROOT_PASSWD=${pass}                   # Must match MYSQL_ROOT_PASSWORD (idea#123).
       - TIME_ZONE=Etc/UTC                        # Optional, default is UTC. Should be uncomment and set to your local time zone.
-      - SEAFILE_ADMIN_EMAIL=koen@swings.be       # Specifies Seafile admin user, default is 'me@example.com'.
-      - SEAFILE_ADMIN_PASSWORD=admin911!         # Specifies Seafile admin password, default is 'asecret'.
+      # Neutral placeholder — not a personal address (idea#123).
+      - SEAFILE_ADMIN_EMAIL=admin@idea.local
+      - SEAFILE_ADMIN_PASSWORD=${pass}           # Same generated instance password as the DB (idea#123).
       - SEAFILE_SERVER_LETSENCRYPT=false         # Whether to use https or not.
       - SEAFILE_SERVER_HOSTNAME=docs.seafile.com # Specifies your host name if https is enabled.
     depends_on:
