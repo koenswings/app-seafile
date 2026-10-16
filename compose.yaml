@@ -48,6 +48,10 @@ services:
     volumes:
       #- /opt/seafile-data:/shared               # Required, specifies the path to Seafile data persistent store.
       - ./data/shared:/shared                    # Seafile data, never touched by MariaDB (MIGRATION.md).
+      - ./idea-seafile-start.sh:/idea/start.sh:ro  # Start-time ownership guard (see the script).
+    # Fix ownership of /shared/seafile (only when needed), then run the image's own start command.
+    entrypoint: ["/bin/sh", "/idea/start.sh"]
+    command: ["/sbin/my_init", "--", "/scripts/enterpoint.sh"]
     environment:
       - DB_HOST=db
       - DB_ROOT_PASSWD=${pass}                   # Must match MYSQL_ROOT_PASSWORD (idea#123).

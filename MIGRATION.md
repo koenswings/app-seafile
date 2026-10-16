@@ -26,3 +26,13 @@ nothing. An **existing** instance keeps its old compose until it is migrated by 
    existing user can sign in. If not: stop it, move the backup back, and restore the old compose.
 
 Do not run this on a Pi without an approved change (the data move is manual).
+
+## Start-time ownership guard
+
+The `seafile` service now starts through `idea-seafile-start.sh`, mounted read-only at
+`/idea/start.sh`. Before running the image's own command (`/sbin/my_init -- /scripts/enterpoint.sh`,
+see haiwen/seafile-docker `image/seafile_11.0/Dockerfile`), it checks `/shared/seafile`. If
+anything there is not owned by 0:0 it runs `chown -R 0:0 /shared/seafile`, and nothing outside
+that folder. On a first start (no folder yet) it does nothing. If the chown fails, the container
+exits instead of starting Seafile in a broken state. This also covers a redock or a copy that
+changed ownership, not only the old shared-folder layout.

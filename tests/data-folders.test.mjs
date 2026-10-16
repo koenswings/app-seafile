@@ -12,7 +12,7 @@ const mounts = n => [...service(n).matchAll(/^\s+- (\.\/[^:\s]+):(\/[^\s:#]+)/gm
 
 it('db mounts ./data/db at /var/lib/mysql; seafile mounts ./data/shared at /shared', () => {
   assert.deepEqual(mounts('db'), [{ host: './data/db', target: '/var/lib/mysql' }])
-  assert.deepEqual(mounts('seafile'), [{ host: './data/shared', target: '/shared' }])
+  assert.deepEqual(mounts('seafile').filter(m => m.host.startsWith('./data')), [{ host: './data/shared', target: '/shared' }])
 })
 
 it('no host folder is mounted by both services, and neither contains the other', () => {
