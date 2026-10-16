@@ -22,7 +22,10 @@ services:
       - MARIADB_AUTO_UPGRADE=1
     volumes:
       #- /opt/seafile-mysql/db:/var/lib/mysql    # Required, specifies the path to MySQL data persistent store.
-      - ./data:/var/lib/mysql                    # Required, specifies the path to MySQL data persistent store.
+      # MariaDB gets its OWN folder. It used to share ./data with Seafile, and MariaDB's entrypoint
+      # chowns its whole datadir to uid 999 on every (re)create, which made Seafile 11 refuse to
+      # start ("root is not the owner of /shared/seafile/seafile-data", HTTP 502). See MIGRATION.md.
+      - ./data/db:/var/lib/mysql
     networks:
       - seafile-net
   memcached:
@@ -44,7 +47,11 @@ services:
 #     - 443:443  # If https is enabled, cancel the comment.
     volumes:
       #- /opt/seafile-data:/shared               # Required, specifies the path to Seafile data persistent store.
-      - ./data:/shared                           # Required, specifies the path to Seafile data persistent store.
+      - ./data/shared:/shared                    # Seafile data, never touched by MariaDB (MIGRATION.md).
+      - ./idea-seafile-start.sh:/idea/start.sh:ro  # Start-time ownership guard (see the script).
+    # Fix ownership of /shared/seafile (only when needed), then run the image's own start command.
+    entrypoint: ["/bin/sh", "/idea/start.sh"]
+    command: ["/sbin/my_init", "--", "/scripts/enterpoint.sh"]
     environment:
       - DB_HOST=db
       - DB_ROOT_PASSWD=${pass}                   # Must match MYSQL_ROOT_PASSWORD (idea#123).
