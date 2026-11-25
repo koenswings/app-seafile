@@ -8,7 +8,7 @@ Seafile data uses relative `./data` bind mounts on the App Disk
 yet at current App Disk conventions**: `compose.yaml` has no `x-app.version`,
 no `x-app-version` labels, no Docker healthcheck, and no updateApp fields
 (`healthCheck`, `snapshotExclude`, `backup`). Bring those up before a
-Kit-managed release (`script/check-compose.mjs` in agent-app-dev).
+Kit-managed release (`script/check-compose.mjs` in agent-app-dev). There is no `x-app.version` and no git tag or GitHub Release yet.
 
 ## Credentials (idea#123)
 
